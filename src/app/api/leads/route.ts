@@ -45,5 +45,8 @@ export async function POST(req: NextRequest) {
     data: { actor: "system", action: "lead.created", entity: "Lead", entityId: lead.id, meta: { type: data.type } },
   });
 
+  const { sendLeadNotification } = await import("@/lib/email");
+  await sendLeadNotification(lead.id);
+
   return NextResponse.json({ ok: true });
 }

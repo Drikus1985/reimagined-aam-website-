@@ -312,7 +312,7 @@ export async function executeTool(
         if (!input.email && !input.phone) {
           return JSON.stringify({ ok: false, error: "Need at least an email or phone number." });
         }
-        await prisma.lead.create({
+        const lead = await prisma.lead.create({
           data: {
             type: input.type,
             name: String(input.name).slice(0, 200),
@@ -329,6 +329,8 @@ export async function executeTool(
         await prisma.auditLog.create({
           data: { actor: "ai-assistant", action: "assistant.lead_created", meta: { type: input.type } },
         });
+        const { sendLeadNotification } = await import("../email");
+        await sendLeadNotification(lead.id);
         return JSON.stringify({ ok: true, info: "Project brief captured. A specialist will make contact." });
       }
       default:

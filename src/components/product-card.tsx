@@ -5,6 +5,7 @@ import { FitmentVerdict } from "@/lib/fitment";
 import { effectivePriceCents, formatZar, isOnSale } from "@/lib/money";
 import { FitmentBadge } from "./fitment-badge";
 import { AddToCartButton } from "./add-to-cart";
+import { CompareToggle } from "./compare";
 
 export function ProductCard({ product, verdict }: { product: ProductCardData; verdict?: FitmentVerdict }) {
   const price = effectivePriceCents(product);
@@ -45,9 +46,12 @@ export function ProductCard({ product, verdict }: { product: ProductCardData; ve
           <Link href={`/products/${product.slug}`} className="hover:text-white hover:underline">{product.name}</Link>
         </h3>
         {verdict && <FitmentBadge verdict={verdict} small />}
-        <div className="mt-auto flex items-baseline gap-2">
-          <span className="text-lg font-bold text-paper-50">{formatZar(price)}</span>
-          {sale && <span className="text-sm text-steel-400 line-through">{formatZar(product.regularPriceCents)}</span>}
+        <div className="mt-auto flex items-baseline justify-between gap-2">
+          <span className="flex items-baseline gap-2">
+            <span className="text-lg font-bold text-paper-50">{formatZar(price)}</span>
+            {sale && <span className="text-sm text-steel-400 line-through">{formatZar(product.regularPriceCents)}</span>}
+          </span>
+          <CompareToggle slug={product.slug} name={product.name} />
         </div>
         {notCompatible ? (
           <p className="rounded border border-race-700 bg-race-700/10 px-2 py-1.5 text-center text-xs font-semibold text-race-500">

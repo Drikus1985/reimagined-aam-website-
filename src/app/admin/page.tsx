@@ -4,7 +4,8 @@ import { prisma } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  const [products, needsReview, orders, awaitingPayment, leads, newLeads, pendingFitments, knowledge, recentAudit] =
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const [products, needsReview, orders, awaitingPayment, leads, newLeads, pendingFitments, knowledge, recentAudit, topPages] =
     await Promise.all([
       prisma.product.count(),
       prisma.product.count({ where: { needsReview: true } }),
@@ -15,6 +16,13 @@ export default async function AdminDashboard() {
       prisma.fitment.count({ where: { approved: false } }),
       prisma.knowledgeChunk.count({ where: { approved: false } }),
       prisma.auditLog.findMany({ orderBy: { createdAt: "desc" }, take: 12 }),
+      prisma.pageViewDaily.groupBy({
+        by: ["path"],
+        where: { date: { gte: weekAgo } },
+        _sum: { count: true },
+        orderBy: { _sum: { count: "desc" } },
+        take: 10,
+      }),
     ]);
 
   const cards = [
@@ -36,6 +44,22 @@ export default async function AdminDashboard() {
           </Link>
         ))}
       </div>
+
+      <h2 className="headline mt-8 text-lg text-paper-50">Top pages — last 7 days (consented visits only)</h2>
+      {topPages.length === 0 ? (
+        <p className="mt-3 rounded-lg border border-ink-800 bg-ink-900 p-4 text-sm text-steel-300">
+          No analytics yet — counts appear once visitors grant consent.
+        </p>
+      ) : (
+        <ul className="mt-3 divide-y divide-ink-800 rounded-lg border border-ink-800 bg-ink-900 text-sm">
+          {topPages.map((row) => (
+            <li key={row.path} className="flex justify-between px-4 py-2">
+              <span className="font-mono text-xs text-paper-100">{row.path}</span>
+              <span className="font-semibold text-paper-50">{row._sum.count}</span>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <h2 className="headline mt-8 text-lg text-paper-50">Recent activity (audit log)</h2>
       <ul className="mt-3 divide-y divide-ink-800 rounded-lg border border-ink-800 bg-ink-900 text-sm">

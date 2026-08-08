@@ -119,9 +119,11 @@ export async function createOrder(cartLines: CartLine[], input: CheckoutInput): 
 
 /** Mark an order paid after a verified ITN; decrement stock atomically. */
 export async function markOrderPaid(orderId: string, pfPaymentId: string): Promise<void> {
+  let becamePaid = false;
   await prisma.$transaction(async (tx) => {
     const order = await tx.order.findUnique({ where: { id: orderId }, include: { items: true } });
     if (!order || order.status === "PAID" || order.status === "FULFILLED") return;
+    becamePaid = true;
     await tx.order.update({
       where: { id: orderId },
       data: { status: "PAID", payfastPaymentId: pfPaymentId, paidAt: new Date() },
@@ -137,4 +139,9 @@ export async function markOrderPaid(orderId: string, pfPaymentId: string): Promi
       data: { actor: "system", action: "order.paid", entity: "Order", entityId: orderId, meta: { pfPaymentId } },
     });
   });
+  if (becamePaid) {
+    // Outside the transaction: email failure must never roll back a payment.
+    const { sendOrderPaidEmails } = await import("./email");
+    await sendOrderPaidEmails(orderId);
+  }
 }

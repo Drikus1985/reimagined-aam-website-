@@ -3,6 +3,9 @@ import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { AssistantWidget } from "@/components/assistant-widget";
+import { CompareBar } from "@/components/compare";
+import { ConsentBanner, PageViewBeacon } from "@/components/analytics";
+import { Suspense } from "react";
 import { businessInfo } from "../../prisma/seed-data";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -49,6 +52,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main id="main">{children}</main>
         <Footer />
         <AssistantWidget />
+        <CompareBar />
+        <ConsentBanner />
+        <Suspense fallback={null}>
+          <PageViewBeacon />
+        </Suspense>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}

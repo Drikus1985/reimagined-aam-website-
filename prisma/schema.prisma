@@ -338,6 +338,17 @@ model KnowledgeChunk {
   createdAt  DateTime @default(now())
 }
 
+// Consent-aware, first-party analytics: daily aggregated page views only —
+// no visitor identifiers, no raw event log. Rows exist only for consented visits.
+model PageViewDaily {
+  id    String   @id @default(cuid())
+  date  DateTime @db.Date
+  path  String
+  count Int      @default(0)
+
+  @@unique([date, path])
+}
+
 model AuditLog {
   id        String   @id @default(cuid())
   actor     String // "admin" | "ai-assistant" | "system"

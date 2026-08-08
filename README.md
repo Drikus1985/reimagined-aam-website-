@@ -149,13 +149,16 @@ Security headers + CSP are in `next.config.ts`; rate limiting is in-memory (swap
 1. **Sample catalogue** — real data must be imported (see above); prices/stock/policies/hours are placeholders flagged in the UI and reports.
 2. **Product photography** — placeholder SVGs until asset migration.
 3. **Reviews** — placeholder messaging on the homepage; needs a source of verified reviews.
-4. **Email notifications** — order confirmation/status emails not yet wired (hook in `markOrderPaid` and `/api/leads`).
-5. **Vector RAG** — keyword retrieval is in place; pgvector upgrade is a single-module swap.
-6. **Product comparison** — deferred; facet/fitment filtering covers the primary comparison need.
-7. **Analytics** — consent-aware analytics hooks not yet added (recommend a cookieless provider or a consent banner + GA4).
-8. **Rate limiting/state** — in-memory; use Redis for multi-instance deployments.
-9. **Courier Guy** — request/response shapes for Shiplogic are implemented from public docs but untested without a key; flat-rate fallback covers outages by design.
-10. **Woo variation products** — the CSV importer collapses variations into their parent; per-variation SKUs need a follow-up if the store uses them heavily.
+4. **Vector RAG** — keyword retrieval is in place; pgvector upgrade is a single-module swap.
+5. **Rate limiting/state** — in-memory; use Redis for multi-instance deployments.
+6. **Courier Guy** — request/response shapes for Shiplogic are implemented from public docs but untested without a key; flat-rate fallback covers outages by design.
+7. **Woo variation products** — the CSV importer collapses variations into their parent; per-variation SKUs need a follow-up if the store uses them heavily.
+
+## Email, comparison & analytics
+
+- **Email notifications** (`src/lib/email.ts`): customer order confirmation + staff order/lead alerts, sent after a verified PayFast payment (`markOrderPaid`) and on lead capture (forms and the AI specialist). Configure `SMTP_*` and `ORDERS_NOTIFY_EMAIL`/`LEADS_NOTIFY_EMAIL`; with no `SMTP_HOST` every send is a graceful no-op recorded in the audit log, so payments never depend on the mail server.
+- **Product comparison**: "Compare" checkbox on every product card (max 4, localStorage) → floating compare bar → `/compare?p=slug1,slug2` — side-by-side price, availability, fitment-for-your-vehicle, and the union of spec rows.
+- **Consent-aware analytics**: a consent banner (no pre-consent requests); on "allow", `navigator.sendBeacon` posts the path to `/api/analytics`, which upserts **daily aggregate counts only** — `(date, path, count)`, no IPs, cookies, or visitor identifiers. Top pages for the last 7 days show on the admin dashboard. Declining stores only the decision.
 
 ## Reports
 
