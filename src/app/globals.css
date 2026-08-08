@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  /* Charcoal / warm-white / restrained red — classic American performance workshop */
+  --color-ink-950: #131519;
+  --color-ink-900: #1a1d21;
+  --color-ink-850: #20242a;
+  --color-ink-800: #272c33;
+  --color-ink-700: #343b44;
+  --color-ink-600: #4a525d;
+  --color-steel-400: #8a919b;
+  --color-steel-300: #aab0b9;
+  --color-paper-50: #f7f4ee;
+  --color-paper-100: #efebe2;
+  --color-paper-200: #e2ddd1;
+  --color-race-600: #c8102e;
+  --color-race-700: #a50d26;
+  --color-race-500: #e01c3c;
+  --color-brass-400: #d3a959;
+
+  --font-display: "Arial Narrow", "Helvetica Neue Condensed", "Roboto Condensed", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: var(--color-ink-950);
+  color: var(--color-paper-100);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Visible focus states everywhere */
+:focus-visible {
+  outline: 2px solid var(--color-race-500);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--color-race-600);
+  color: #fff;
+}
+
+/* Headline treatment: condensed, uppercase, tight */
+.headline {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 700;
+}
+
+/* Subtle blueprint grid motif for hero/section backgrounds */
+.blueprint {
+  background-image:
+    linear-gradient(rgba(138, 145, 155, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(138, 145, 155, 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Brushed-metal divider accent */
+.rule-red {
+  height: 3px;
+  width: 64px;
+  background: linear-gradient(90deg, var(--color-race-600), var(--color-race-700));
+}
+
+/* Prose styling for articles/policies on dark background */
+.prose-dark h2 { font-weight: 700; font-size: 1.35rem; margin: 1.75rem 0 0.75rem; color: var(--color-paper-50); }
+.prose-dark h3 { font-weight: 700; font-size: 1.1rem; margin: 1.4rem 0 0.5rem; color: var(--color-paper-50); }
+.prose-dark p { margin: 0.75rem 0; line-height: 1.75; color: var(--color-paper-100); }
+.prose-dark ul, .prose-dark ol { margin: 0.75rem 0 0.75rem 1.5rem; line-height: 1.7; }
+.prose-dark ul { list-style: disc; }
+.prose-dark ol { list-style: decimal; }
+.prose-dark li { margin: 0.3rem 0; }
+.prose-dark strong { color: var(--color-paper-50); }
+.prose-dark a { color: var(--color-race-500); text-decoration: underline; text-underline-offset: 3px; }
+.prose-dark em { color: var(--color-steel-300); }

@@ -1,0 +1,14 @@
+from,to,notes
+/product/holley-classic-carburetor-750cfm/,/products/holley-classic-carburetor-750cfm,seeded in DB
+/product/performer-eps-intake-manifold-for-1955-86-small-bl/,/products/edelbrock-performer-eps-intake-manifold-sbc,seeded in DB
+/product/mastodon-throttle-return-springs-bracket-kit/,/products/mastodon-throttle-return-springs-bracket-kit,seeded in DB
+/product/edelbrock-performer-carburetor-600-cfm-manual-choke-2/,/products/edelbrock-performer-carburetor-600-cfm-manual-choke,seeded in DB
+/product/holley-carburetor-service-parts-renew-kit/,/products/holley-carburettor-service-renew-kit,seeded in DB
+/product/holley-street-warrior-carburetor-600-cfm-manual-choke-sa/,/products/holley-street-warrior-600-cfm-manual,seeded in DB
+/muscle-car-services/,/services/restorations,seeded in DB
+/about-us/,/about,seeded in DB
+/contact-us/,/contact,seeded in DB
+/pages/contact,/contact,seeded in DB
+/shop/,/shop,seeded in DB
+/product/<any-slug>/,/products/<same-slug>,pattern fallback in src/app/[...legacy]/page.tsx
+/product-category/<any-slug>/,/category/<same-slug>,pattern fallback in src/app/[...legacy]/page.tsx

@@ -1,0 +1,349 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Catalogue ----------
+
+model Brand {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String?
+  logoUrl     String?
+  products    Product[]
+}
+
+model Category {
+  id          String            @id @default(cuid())
+  slug        String            @unique
+  name        String
+  description String?
+  position    Int               @default(0)
+  parentId    String?
+  parent      Category?         @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[]        @relation("CategoryTree")
+  products    ProductCategory[]
+}
+
+enum StockStatus {
+  IN_STOCK
+  OUT_OF_STOCK
+  BACKORDER
+  PREORDER
+}
+
+enum ProductStatus {
+  ACTIVE
+  DRAFT
+  ARCHIVED
+}
+
+enum SourceType {
+  SCRAPED
+  WOO_IMPORT
+  MANUAL
+  SAMPLE
+}
+
+model Product {
+  id                   String            @id @default(cuid())
+  slug                 String            @unique
+  name                 String
+  sku                  String?
+  brandId              String?
+  brand                Brand?            @relation(fields: [brandId], references: [id])
+  regularPriceCents    Int
+  salePriceCents       Int?
+  currency             String            @default("ZAR")
+  stockStatus          StockStatus       @default(IN_STOCK)
+  stockQty             Int?
+  shortDescription     String?
+  description          String?
+  specs                Json? // [{label, value}]
+  attributes           Json? // {key: value}
+  included             Json? // string[]
+  requiredParts        Json? // string[] free-text requirements
+  installNotes         String?
+  weightGrams          Int?
+  dimensionsMm         Json? // {l,w,h}
+  universalFit         Boolean           @default(false)
+  requiresFitmentCheck Boolean           @default(false)
+  safetyCritical       Boolean           @default(false)
+  status               ProductStatus     @default(ACTIVE)
+  isFeatured           Boolean           @default(false)
+  isBestSeller         Boolean           @default(false)
+  popularity           Int               @default(0)
+  seoTitle             String?
+  seoDescription       String?
+  canonicalUrl         String?
+  sourceUrl            String?
+  sourceType           SourceType        @default(MANUAL)
+  needsReview          Boolean           @default(false)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  images               ProductImage[]
+  categories           ProductCategory[]
+  engineFamilies       ProductEngine[]
+  fitments             Fitment[]
+  relationsFrom        ProductRelation[] @relation("RelFrom")
+  relationsTo          ProductRelation[] @relation("RelTo")
+  orderItems           OrderItem[]
+
+  @@index([status, isFeatured])
+  @@index([sku])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  position  Int     @default(0)
+}
+
+model ProductCategory {
+  productId  String
+  categoryId String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([productId, categoryId])
+}
+
+model EngineFamily {
+  id       String          @id @default(cuid())
+  slug     String          @unique
+  name     String
+  make     String?
+  aliases  Json? // string[] e.g. ["SBC", "small block", "350"]
+  products ProductEngine[]
+  fitments Fitment[]
+}
+
+model ProductEngine {
+  productId      String
+  engineFamilyId String
+  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  engineFamily   EngineFamily @relation(fields: [engineFamilyId], references: [id], onDelete: Cascade)
+
+  @@id([productId, engineFamilyId])
+}
+
+// ---------- Vehicles & fitment ----------
+
+model VehicleMake {
+  id     String         @id @default(cuid())
+  slug   String         @unique
+  name   String
+  models VehicleModel[]
+  fitments Fitment[]
+}
+
+model VehicleModel {
+  id       String      @id @default(cuid())
+  slug     String      @unique
+  makeId   String
+  make     VehicleMake @relation(fields: [makeId], references: [id], onDelete: Cascade)
+  name     String
+  yearFrom Int
+  yearTo   Int
+  fitments Fitment[]
+}
+
+enum FitmentStatus {
+  CONFIRMED
+  UNIVERSAL_WITH_REQUIREMENTS
+  POTENTIAL
+  NOT_COMPATIBLE
+}
+
+enum FitmentSource {
+  IMPORTED
+  STAFF
+  AI_SUGGESTED
+}
+
+model Fitment {
+  id             String        @id @default(cuid())
+  productId      String
+  product        Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  makeId         String?
+  make           VehicleMake?  @relation(fields: [makeId], references: [id])
+  modelId        String?
+  model          VehicleModel? @relation(fields: [modelId], references: [id])
+  yearFrom       Int?
+  yearTo         Int?
+  engineFamilyId String?
+  engineFamily   EngineFamily? @relation(fields: [engineFamilyId], references: [id])
+  status         FitmentStatus
+  notes          String?
+  source         FitmentSource @default(STAFF)
+  approved       Boolean       @default(true)
+  approvedBy     String?
+  approvedAt     DateTime?
+  createdAt      DateTime      @default(now())
+
+  @@index([productId, approved])
+}
+
+enum RelationType {
+  RELATED
+  CROSS_SELL
+  UPSELL
+  REQUIRED
+  RECOMMENDED
+  FREQUENTLY_BOUGHT_TOGETHER
+}
+
+model ProductRelation {
+  id        String       @id @default(cuid())
+  productId String
+  relatedId String
+  type      RelationType
+  note      String?
+  product   Product      @relation("RelFrom", fields: [productId], references: [id], onDelete: Cascade)
+  related   Product      @relation("RelTo", fields: [relatedId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, relatedId, type])
+}
+
+// ---------- Orders ----------
+
+enum OrderStatus {
+  PENDING
+  AWAITING_PAYMENT
+  PAID
+  PAYMENT_FAILED
+  CANCELLED
+  FULFILLED
+}
+
+enum DeliveryMethod {
+  COURIER
+  COLLECTION
+}
+
+model Order {
+  id                String         @id @default(cuid())
+  orderNumber       String         @unique
+  status            OrderStatus    @default(PENDING)
+  email             String
+  phone             String
+  firstName         String
+  lastName          String
+  addressLine1      String?
+  addressLine2      String?
+  suburb            String?
+  city              String?
+  province          String?
+  postalCode        String?
+  country           String         @default("ZA")
+  deliveryMethod    DeliveryMethod @default(COURIER)
+  subtotalCents     Int
+  shippingCents     Int            @default(0)
+  totalCents        Int
+  currency          String         @default("ZAR")
+  payfastPaymentId  String?
+  paidAt            DateTime?
+  customerNote      String?
+  items             OrderItem[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+}
+
+model OrderItem {
+  id             String  @id @default(cuid())
+  orderId        String
+  order          Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String?
+  product        Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  nameSnapshot   String
+  skuSnapshot    String?
+  unitPriceCents Int
+  quantity       Int
+  lineTotalCents Int
+}
+
+// ---------- Leads & enquiries ----------
+
+enum LeadType {
+  RESTORATION
+  ENGINE_BUILD
+  DREAM_BUILD
+  PART_SOURCING
+  GENERAL
+  AI_HANDOFF
+}
+
+enum LeadStatus {
+  NEW
+  IN_PROGRESS
+  CLOSED
+}
+
+model Lead {
+  id        String     @id @default(cuid())
+  type      LeadType
+  status    LeadStatus @default(NEW)
+  name      String
+  email     String
+  phone     String?
+  message   String
+  vehicle   String?
+  brief     Json? // structured project brief (AI or form generated)
+  consent   Boolean    @default(false)
+  source    String? // page or "ai-assistant"
+  createdAt DateTime   @default(now())
+}
+
+// ---------- Content ----------
+
+model Article {
+  id             String    @id @default(cuid())
+  slug           String    @unique
+  title          String
+  excerpt        String?
+  body           String
+  category       String?
+  publishedAt    DateTime  @default(now())
+  seoTitle       String?
+  seoDescription String?
+  sourceUrl      String?
+  sourceType     SourceType @default(MANUAL)
+}
+
+model Redirect {
+  id       String @id @default(cuid())
+  fromPath String @unique
+  toPath   String
+  status   Int    @default(301)
+}
+
+// ---------- AI knowledge & audit ----------
+
+model KnowledgeChunk {
+  id         String   @id @default(cuid())
+  sourceType String // product | article | policy | workshop
+  sourceId   String?
+  title      String
+  content    String
+  approved   Boolean  @default(false)
+  embedding  Json? // number[] when an embedding provider is configured
+  createdAt  DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actor     String // "admin" | "ai-assistant" | "system"
+  action    String
+  entity    String?
+  entityId  String?
+  meta      Json?
+  createdAt DateTime @default(now())
+}
