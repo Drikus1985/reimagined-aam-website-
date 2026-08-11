@@ -151,3 +151,22 @@ against the production DB (see docs/DEPLOYMENT.md §1b).
   steering column / oil pan / gasket variant picks, and in-house shots for
   the remaining Mastodon house-brand items and used engine blocks.
 - Remaining without photos: **45**.
+
+## Round 2 confirmation — Drix sign-off 11.08.2026
+
+All web candidates confirmed. Actions:
+
+- **KNDI-002 attached** immediately from the extracted CRS DIS-8360 photo
+  (total attached: **35**; 44 remaining).
+- **12 confirmed web images** baked into `scripts/fetch-web-images.mjs`
+  (the sandbox gateway blocks these hosts, so run it from the Mac):
+  ```bash
+  node scripts/fetch-web-images.mjs
+  DATABASE_URL="<direct>" npx tsx scripts/attach-product-images.ts data/supplier-images
+  ```
+  Covers: L817, L900, BC200J25, BRG-114925, BRG-014949, AND SHIFT-2,
+  KD2020, KD6078, FT1502/10, NO.94, WA6037B(C), M192704455679.
+  Status per SKU tracked in `reports/web-image-candidates.csv`.
+- Still pending input: Prosport catalog PDF upload (3 gauge sets), steering
+  column / oil pan / gasket variant picks, SSSH0003 clarification, in-house
+  shots for the rest.
