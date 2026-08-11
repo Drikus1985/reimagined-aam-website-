@@ -39,6 +39,14 @@ writes `reports/image-migration-report.md`. Use `--dry-run` to preview,
 it to a CDN and adjust URLs), then redeploy. The full URL list is in
 `reports/asset-manifest.csv`.
 
+Then attach the supplier-sourced photos for products that never had images
+(29 curated in `data/supplier-images/`, see
+`reports/supplier-image-sources.md`):
+
+```bash
+DATABASE_URL="<direct 5432 connection string>" npx tsx scripts/attach-product-images.ts data/supplier-images
+```
+
 ## 2. Vercel project
 
 1. Import the GitHub repo into Vercel (framework auto-detects Next.js;

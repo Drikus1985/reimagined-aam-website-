@@ -90,3 +90,40 @@ resolving the rest.
 **Rights note:** supplier photos are fine for listing the supplier's own parts
 (that's what they're distributed for), but confirm with Rodco/CRS/Prosport
 before reusing their imagery for branding or marketing beyond product listings.
+
+---
+
+## Executed 11.08.2026 — first extraction run (uploaded books)
+
+Drix uploaded `Rodco 09.07.2026.xlsx`, `CRS 15.07.2026.xlsx`,
+`CRS-Street Rod Parts 13.05.2026.xlsx`, `CRS Stock List 13.05.2026.xlsx` and
+the GRWA quotation PDF. Results:
+
+- **1,676 images extracted** (full index: `reports/supplier-image-map.csv`);
+  6 more header/valve photos pulled from the GRWA PDF.
+- **29 products that had no photo now have one** — verified by description
+  *and* visual check, enhanced (Lanczos upscale capped at 4×, unsharp mask,
+  white background, square canvas, webp) and attached. Sources are Excel
+  thumbnails (mostly 80–280 px), so output is 400–800 px: crisp on cards,
+  acceptable on product pages. SKU-named set committed in
+  `data/supplier-images/`; served copies in `public/products/live/supplier-*`.
+- Attached SKUs: MMR-09057-BK/R, MMR-11225, MMR-25005, MMR-25013, MMR-25030,
+  MMR-25050, MMR-25054, MMR-25095, MMR-25106, MMR-26086, MMR-28137, MMR-32007,
+  MMR-38021-BK, MMR-41021, MMR-45018, MMR-67003, MMR-81009, MMR32057,
+  MMR-CM-34448, MMR-CM-34457, MMR-CM-D11193, MMR-700C, MMR-32024-B, 300-160,
+  UJ006, SI-AT26194, TSC-7007B-1, WHK-2100.
+- **Rejected matches** (photo would misrepresent the product):
+  WHK-3001 LS standalone harness ≠ MMR-3001BL ignition wire set;
+  07-0801 T-bar wing nuts ≠ MMR-11214 Minitab hold-downs;
+  07-0205 SBF gasket engine unconfirmed for MMR-58089.
+- **Needs Drix's call**: DIS-8360 billet distributor for KNDI-002 "V8
+  Distributor" (plausible, brand unconfirmed); steering column length/finish
+  for MMR-8513P; CRS oil pans vs MMR-75013/75073.
+- **50 products still without photos.** Best next sources: the bigger
+  `Rodco 13.05.2026.xlsx` (21.5 MB — not yet uploaded, likely has the missing
+  SI-AT parts and larger originals), the Mastodon Dealer Order Book sheets,
+  and the Prosport Performance catalog PDF for the gauge SKUs. Borgeson /
+  Enginetech / engine blocks / Smoothie wheel need brand or in-house photos.
+
+Production: run `npx tsx scripts/attach-product-images.ts data/supplier-images`
+against the production DB (see docs/DEPLOYMENT.md §1b).
