@@ -1,0 +1,52 @@
+{
+  "description": "Attribution for public information used in the development seed. No live-site crawling occurred (see crawl-report.md). All product records in the seed are marked sourceType=SAMPLE and needsReview=true.",
+  "generatedAt": "2026-08-08",
+  "sources": [
+    {
+      "url": "https://allamericanmuscle.co.za/",
+      "via": "public search-engine result snippet",
+      "used_for": "tagline, 600+ parts positioning, brand focus (Ford/Chevrolet/Dodge/Mopar), nationwide delivery messaging"
+    },
+    {
+      "url": "http://allamericanmuscle.co.za/contact-us/",
+      "via": "public search-engine result snippet",
+      "used_for": "address (15 Tarry Rd, Alrode South, Alberton, 1451), phone 010 592 1706, WhatsApp 072 042 6477, email parts@allamericanmuscle.co.za"
+    },
+    {
+      "url": "https://allamericanmuscle.co.za/about-us/",
+      "via": "public search-engine result snippet",
+      "used_for": "2000 m2 workshop, restoration positioning, US supplier network"
+    },
+    {
+      "url": "https://www.facebook.com/allamericanmusclev8/",
+      "via": "public search-engine result snippet",
+      "used_for": "social link"
+    },
+    {
+      "url": "https://www.tiktok.com/@allamericanmuscle",
+      "via": "public search-engine result snippet",
+      "used_for": "social link; publicly posted price of Edelbrock Performer 600 CFM carburettor (R8,799.99) used for the corresponding sample product"
+    },
+    {
+      "url": "https://allamericanmuscle.co.za/product/holley-classic-carburetor-750cfm/",
+      "via": "public search-engine result (URL only)",
+      "used_for": "redirect-map seed entry and sample product name; specs/prices are placeholders flagged needsReview"
+    },
+    {
+      "url": "https://allamericanmuscle.co.za/product/performer-eps-intake-manifold-for-1955-86-small-bl/",
+      "via": "public search-engine result (URL only)",
+      "used_for": "redirect-map seed entry and sample product name"
+    },
+    {
+      "url": "https://allamericanmuscle.co.za/product/mastodon-throttle-return-springs-bracket-kit/",
+      "via": "public search-engine result (URL only)",
+      "used_for": "redirect-map seed entry and sample product name"
+    },
+    {
+      "url": "https://allamericanmuscle.co.za/muscle-car-services/",
+      "via": "public search-engine result (URL only)",
+      "used_for": "redirect-map seed entry (services page)"
+    }
+  ],
+  "trading_hours_note": "Trading hours shown on /contact are assumptions marked 'provisional' in the UI — confirm with the store and update prisma/seed-data.ts (businessInfo.hours)."
+}
