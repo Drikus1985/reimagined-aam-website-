@@ -44,5 +44,6 @@ next-env.d.ts
 !.env.example
 
 # import/crawl working data
-/data/
+/data/*
 !/data/price-overrides.csv
+!/data/supplier-images/
