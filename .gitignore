@@ -45,3 +45,4 @@ next-env.d.ts
 
 # import/crawl working data
 /data/
+!/data/price-overrides.csv

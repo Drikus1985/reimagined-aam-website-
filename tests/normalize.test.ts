@@ -35,14 +35,15 @@ describe("importer normalisation", () => {
     expect(stripHtml("<ul><li>one</li><li>two</li></ul>")).toContain("• one");
   });
 
-  it("dedupes by SKU then by name", () => {
+  it("dedupes by SKU, and by name only for SKU-less rows", () => {
     const { kept, duplicates } = dedupeProducts([
       base,
-      { ...base, slug: "other-slug", name: "Different Name" }, // same SKU
-      { ...base, slug: "third", sku: undefined },              // same name, no SKU
+      { ...base, slug: "other-slug", name: "Different Name" }, // same SKU → dropped
+      { ...base, slug: "third", sku: undefined },              // same name, no SKU → dropped
+      { ...base, slug: "variant", sku: "TP-1B" },              // same name, DIFFERENT SKU → kept (real variant)
       { ...base, slug: "unique", sku: "TP-2", name: "Unique" },
     ]);
-    expect(kept.map((p) => p.slug)).toEqual(["test-product", "unique"]);
+    expect(kept.map((p) => p.slug)).toEqual(["test-product", "variant", "unique"]);
     expect(duplicates).toHaveLength(2);
   });
 

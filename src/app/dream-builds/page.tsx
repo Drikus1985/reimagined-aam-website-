@@ -28,15 +28,18 @@ export default async function DreamBuildsPage() {
       </p>
 
       <div className="mt-8 rounded-lg border border-ink-800 bg-ink-900 p-6">
-        <h2 className="headline text-xl text-paper-50">1967–68 Mustang Fastback shell — available to order</h2>
+        <h2 className="headline text-xl text-paper-50">1967–68 Mustang Fastback shell — by special order</h2>
         <p className="mt-2 text-sm leading-relaxed text-steel-300">
           Fully licensed Dynacorn reproduction of the most iconic fastback ever made. Accepts 1967–68 running gear
-          and trim. Lead times apply; we'll walk you through options and budget before anything is ordered.
+          and trim. Imported to order — lead times apply, and we'll walk you through options and budget before
+          anything is committed.
         </p>
-        {shell && (
+        {shell ? (
           <Link href={`/products/${shell.slug}`} className="mt-4 inline-block rounded bg-race-600 px-5 py-2.5 font-bold text-white hover:bg-race-700">
             View the body shell
           </Link>
+        ) : (
+          <p className="mt-3 text-sm font-semibold text-race-500">Enquire below for current shell availability and pricing.</p>
         )}
       </div>
 

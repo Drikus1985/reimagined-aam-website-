@@ -36,8 +36,8 @@ export default function EngineBuildingPage() {
 
       <p className="mt-6 text-sm text-steel-300">
         Building it yourself? Shop <Link href="/category/engines-components" className="text-race-500 hover:underline">engine components</Link>,{" "}
-        <Link href="/category/rebuild-kits" className="text-race-500 hover:underline">rebuild kits</Link> and{" "}
-        <Link href="/category/camshafts-valvetrain" className="text-race-500 hover:underline">camshafts</Link> — and read{" "}
+        <Link href="/search?q=rebuild+kit" className="text-race-500 hover:underline">rebuild kits</Link> and{" "}
+        <Link href="/search?q=camshaft" className="text-race-500 hover:underline">camshafts</Link> — and read{" "}
         <Link href="/articles/flat-tappet-cam-break-in" className="text-race-500 hover:underline">our cam break-in guide</Link> first.
       </p>
 

@@ -34,7 +34,6 @@ export default function ContactPage() {
                 </div>
               ))}
             </dl>
-            <p className="mt-3 text-xs text-steel-400">Hours shown are provisional — confirm on WhatsApp before travelling far.</p>
           </div>
         </aside>
         <EnquiryForm type="GENERAL" heading="Send us a message" />

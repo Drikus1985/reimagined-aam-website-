@@ -84,7 +84,11 @@ export function detectEngineFamilies(text: string): string[] {
   return ENGINE_HINTS.filter(([, re]) => re.test(text)).map(([slug]) => slug);
 }
 
-/** Dedupe by SKU first, then by normalised name. Returns kept + dropped report. */
+/**
+ * Dedupe: identical SKUs are always duplicates; identical names are
+ * duplicates only when a product has no SKU of its own (distinct SKUs sharing
+ * a display name are real variants — e.g. bearing sizes — and are kept).
+ */
 export function dedupeProducts(products: NormalizedProduct[]): {
   kept: NormalizedProduct[];
   duplicates: { kept: string; dropped: string; reason: string }[];
@@ -101,12 +105,12 @@ export function dedupeProducts(products: NormalizedProduct[]): {
       duplicates.push({ kept: bySku.get(skuKey)!.slug, dropped: p.slug, reason: `duplicate SKU ${skuKey}` });
       continue;
     }
-    if (byName.has(nameKey)) {
-      duplicates.push({ kept: byName.get(nameKey)!.slug, dropped: p.slug, reason: "duplicate name" });
+    if (!skuKey && byName.has(nameKey)) {
+      duplicates.push({ kept: byName.get(nameKey)!.slug, dropped: p.slug, reason: "duplicate name (no SKU)" });
       continue;
     }
     if (skuKey) bySku.set(skuKey, p);
-    byName.set(nameKey, p);
+    if (!byName.has(nameKey)) byName.set(nameKey, p);
     kept.push(p);
   }
   return { kept, duplicates };

@@ -14,7 +14,9 @@
     "crawl": "tsx scripts/crawl-site.ts",
     "import:csv": "tsx scripts/import-woocommerce-csv.ts",
     "import:api": "tsx scripts/import-woocommerce-api.ts",
-    "import:catalog": "tsx scripts/import-catalog.ts"
+    "import:catalog": "tsx scripts/import-catalog.ts",
+    "import:aam": "tsx scripts/import-aam-store-csv.ts",
+    "import:prices": "tsx scripts/apply-price-overrides.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

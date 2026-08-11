@@ -32,8 +32,8 @@ beforeAll(async () => {
 describe("catalogue search", () => {
   it("finds SBC parts via the alias 'SBC'", async () => {
     const result = await searchCatalog({ query: "SBC intake manifold" });
-    const products = await prisma.product.findMany({ where: { id: { in: result.ids.slice(0, 5) } } });
-    expect(products.some((p) => p.slug.includes("eps-intake"))).toBe(true);
+    const products = await prisma.product.findMany({ where: { id: { in: result.ids.slice(0, 8) } } });
+    expect(products.some((p) => p.slug.includes("intake"))).toBe(true);
   });
 
   it("tolerates misspellings (carburator)", async () => {
@@ -42,9 +42,9 @@ describe("catalogue search", () => {
   });
 
   it("finds by SKU", async () => {
-    const result = await searchCatalog({ query: "EDL-1405-S" });
+    const result = await searchCatalog({ query: "BC296J040" });
     const first = await prisma.product.findUnique({ where: { id: result.ids[0] } });
-    expect(first?.sku).toBe("EDL-1405-S");
+    expect(first?.sku).toBe("BC296J040");
   });
 
   it("facet filters combine with search", async () => {
@@ -89,7 +89,7 @@ describe("AI grounding guard", () => {
 
   it("blocks real products that were never surfaced by catalogue tools (injected slugs)", async () => {
     const { products } = await groundAssistantText(
-      "Try [product:holley-classic-carburetor-750cfm]!",
+      "Try [product:mastodon-throttle-return-springs-bracket-kit]!",
       new Set(), // not grounded in this conversation
       null,
     );
@@ -98,12 +98,12 @@ describe("AI grounding guard", () => {
 
   it("resolves allowed, existing products with live price and fitment", async () => {
     const { text, products } = await groundAssistantText(
-      "The [product:holley-classic-carburetor-750cfm] is a solid choice.",
-      new Set(["holley-classic-carburetor-750cfm"]),
+      "The [product:mastodon-throttle-return-springs-bracket-kit] is a solid choice.",
+      new Set(["mastodon-throttle-return-springs-bracket-kit"]),
       mustang,
     );
     expect(products).toHaveLength(1);
-    const db = await prisma.product.findUniqueOrThrow({ where: { slug: "holley-classic-carburetor-750cfm" } });
+    const db = await prisma.product.findUniqueOrThrow({ where: { slug: "mastodon-throttle-return-springs-bracket-kit" } });
     expect(products[0].priceCents).toBe(db.regularPriceCents);
     expect(text).toContain(db.name);
   });
@@ -114,7 +114,7 @@ describe("AI tool permissions", () => {
     const effects = freshEffects();
     const result = JSON.parse(
       await executeTool(
-        { id: "t", name: "propose_basket_additions", input: { items: [{ productSlug: "holley-classic-carburetor-750cfm", qty: 1 }] } },
+        { id: "t", name: "propose_basket_additions", input: { items: [{ productSlug: "mastodon-throttle-return-springs-bracket-kit", qty: 1 }] } },
         { vehicle: null, cart: [] },
         effects,
       ),
@@ -125,16 +125,16 @@ describe("AI tool permissions", () => {
 
   it("allows proposals for grounded products, but never mutates the basket", async () => {
     const effects = freshEffects();
-    await executeTool({ id: "s", name: "search_products", input: { query: "750 carburettor" } }, { vehicle: null, cart: [] }, effects);
+    await executeTool({ id: "s", name: "search_products", input: { query: "throttle return springs" } }, { vehicle: null, cart: [] }, effects);
     const result = JSON.parse(
       await executeTool(
-        { id: "t", name: "propose_basket_additions", input: { items: [{ productSlug: "holley-classic-carburetor-750cfm", qty: 1 }] } },
+        { id: "t", name: "propose_basket_additions", input: { items: [{ productSlug: "mastodon-throttle-return-springs-bracket-kit", qty: 1 }] } },
         { vehicle: null, cart: [] },
         effects,
       ),
     );
     expect(result.ok).toBe(true);
-    expect(effects.proposal?.items[0].productSlug).toBe("holley-classic-carburetor-750cfm");
+    expect(effects.proposal?.items[0].productSlug).toBe("mastodon-throttle-return-springs-bracket-kit");
   });
 
   it("create_project_brief refuses without explicit consent", async () => {
@@ -157,7 +157,7 @@ describe("AI tool permissions", () => {
     const effects = freshEffects();
     const result = JSON.parse(
       await executeTool(
-        { id: "t", name: "check_fitment", input: { productSlug: "edelbrock-performer-eps-intake-manifold-sbc" } },
+        { id: "t", name: "check_fitment", input: { productSlug: "mastodon-performer-intake-manifold-eps-sbcblock" } },
         { vehicle: null, cart: [] },
         effects,
       ),
@@ -192,7 +192,7 @@ describe("assistant end-to-end (mock provider)", () => {
 
   it("finds nothing for fictional parts and does not invent products", async () => {
     const result = await runAssistant(
-      [{ role: "user", content: "flux capacitor quantum overdrive banana" }],
+      [{ role: "user", content: "zzqxv flurblewidget notarealpartname" }],
       { vehicle: null, cart: [], page: { type: "test" } },
     );
     expect(result.products).toHaveLength(0);

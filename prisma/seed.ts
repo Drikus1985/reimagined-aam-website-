@@ -23,6 +23,17 @@ function placeholderSvg(label: string): string {
 }
 
 async function main() {
+  // Guard: this dev seed WIPES the catalogue. Never run it once real
+  // (imported) data is present, unless explicitly forced.
+  const importedCount = await prisma.product.count({ where: { sourceType: { in: ["WOO_IMPORT", "SCRAPED"] } } });
+  if (importedCount > 0 && !process.argv.includes("--force")) {
+    console.error(
+      `REFUSING TO SEED: database holds ${importedCount} imported (live) products.\n` +
+      "The seed would delete them. Re-run with --force only if you really want a dev reset.",
+    );
+    process.exit(1);
+  }
+
   console.log("Seeding database…");
 
   // Wipe (dev seed is idempotent-by-reset)

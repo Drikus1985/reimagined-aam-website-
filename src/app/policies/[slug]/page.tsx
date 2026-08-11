@@ -2,36 +2,51 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 /**
- * Policy pages. These are clearly-marked placeholder drafts pending the
- * store's official wording — see reports/data-quality-report.md. Replace the
- * body text with the live site's policies during content migration.
+ * Policy pages — verbatim text from the live site (captured 11.08.2026, see
+ * reports/handover/). The live pages themselves are marked "Starter policy …
+ * review with your legal advisor", so the draft banner stays until legal
+ * sign-off (routed to legal@allamericanmuscle.co.za / Focus Legal per the
+ * handover). Replace DRAFT_BANNER-flagged pages with signed-off wording only.
  */
-const POLICIES: Record<string, { title: string; body: string[] }> = {
+const DRAFT_BANNER =
+  "Starter policy for All American Muscle (Pty) Ltd — under review with our legal advisors. The wording below matches the current live site.";
+
+const POLICIES: Record<string, { title: string; sections: [string, string][] }> = {
   terms: {
     title: "Terms & Conditions",
-    body: [
-      "DRAFT — placeholder pending migration of the official store terms.",
-      "All prices are in South African Rand and include VAT unless stated otherwise. Orders are subject to stock availability and confirmation of payment via PayFast. We reserve the right to correct pricing errors; if a corrected price is not acceptable you may cancel for a full refund.",
-      "Fitment information is provided in good faith from verified data and manufacturer sources. Where a part is marked as requiring verification, please confirm fitment with us before ordering. Performance parts may affect vehicle warranties, insurance and roadworthiness — you are responsible for compliance with applicable regulations.",
-      "Special-order and imported items may carry longer lead times, which we communicate before payment. Nothing in these terms limits your rights under the Consumer Protection Act 68 of 2008.",
+    sections: [
+      ["", "These terms govern purchases from All American Muscle (Pty) Ltd, 15 Tarry Rd, Alrode South, Alberton, 1451, South Africa."],
+      ["1. Orders & Pricing", "All prices are listed in South African Rand (ZAR). We reserve the right to correct pricing errors. Placing an order constitutes an offer to purchase, which we accept once payment is confirmed."],
+      ["2. Payment", "Payments are processed securely via Payfast. Orders are confirmed once payment has cleared."],
+      ["3. Shipping & Delivery", "Orders are shipped within South Africa via The Courier Guy. Delivery timeframes are estimates and not guaranteed."],
+      ["4. Backorders", "Items marked “Available on backorder” may be ordered but are not in stock; we will advise expected lead times after your order is placed."],
+      ["5. Returns & Refunds", "Please contact us within 7 days of delivery regarding returns. Items must be unused and in original packaging. Made-to-order and special-order items may be non-returnable."],
+      ["6. Warranty", "Products carry the manufacturer's warranty where applicable. Fitment and installation are the customer's responsibility."],
+      ["7. Contact", "All American Muscle — Phone 010 592 1706 · WhatsApp 072 042 6477 · parts@allamericanmuscle.co.za"],
+      ["8. Governing Law", "These terms are governed by the laws of the Republic of South Africa."],
     ],
   },
   privacy: {
     title: "Privacy & POPIA",
-    body: [
-      "DRAFT — placeholder pending migration of the official policy.",
-      "We collect only the personal information needed to process your order, deliver it, and respond to enquiries: name, contact details, delivery address and order history. Payment card details are handled entirely by PayFast — we never see or store them.",
-      "In line with the Protection of Personal Information Act (POPIA), we process your information with consent, use it only for the purpose you gave it, and never sell it. Enquiry forms and the AI specialist capture contact details only with your explicit consent.",
-      "You may request access to, correction of, or deletion of your personal information at any time via parts@allamericanmuscle.co.za. Analytics on this site are consent-aware and anonymised.",
+    sections: [
+      ["1. Who we are", "All American Muscle (Pty) Ltd, 15 Tarry Rd, Alrode South, Alberton, 1451, South Africa. Contact: parts@allamericanmuscle.co.za · 010 592 1706."],
+      ["2. Information we collect", "When you place an order or create an account we collect your name, contact details, delivery/billing address, and order history. Payment card details are handled by our payment provider, not stored by us."],
+      ["3. How we use it", "To process and deliver orders, manage your account, provide support, and (where you opt in) send updates. We process your information lawfully under the Protection of Personal Information Act (POPIA)."],
+      ["4. Sharing", "We share only what is necessary with our payment processor (Payfast) and courier (The Courier Guy) to fulfil your order. We do not sell your personal information."],
+      ["5. Cookies & analytics", "We use cookies for cart/checkout functionality and may use analytics to improve the site. Analytics on this site run only after you opt in, and count page views without identifying you."],
+      ["6. Your rights", "Under POPIA you may request access to, correction of, or deletion of your personal information by contacting us."],
+      ["7. Retention", "We keep order records for as long as required for tax, legal and warranty purposes."],
     ],
   },
   returns: {
     title: "Returns & Refunds",
-    body: [
-      "DRAFT — placeholder pending migration of the official policy.",
-      "Unused parts in original, unopened packaging may be returned within 14 days of delivery for a refund or exchange. Special-order/imported items and electrical components are excluded unless defective.",
-      "Defective items are handled under the manufacturer's warranty and the Consumer Protection Act — contact us with your order number and photos and we'll manage the claim with the supplier.",
-      "Return shipping for change-of-mind returns is for the customer's account; we arrange and cover collection for confirmed defects. Refunds are processed to the original payment method within 7 working days of receiving the returned item.",
+    sections: [
+      ["1. Returns window", "Please notify us within 7 days of delivery if you wish to return an item. Items must be unused, in original packaging and in resaleable condition."],
+      ["2. Non-returnable items", "Special-order, made-to-order and electrical items may not be returnable unless faulty."],
+      ["3. Faulty or incorrect goods", "If goods are defective, damaged or incorrect, contact us immediately. Your rights under the Consumer Protection Act (CPA) are not affected."],
+      ["4. Refunds", "Approved refunds are processed to your original payment method once the returned item is received and inspected. Please allow several business days for the refund to reflect."],
+      ["5. Return shipping", "Return shipping costs are for the customer's account unless the item is faulty or incorrect."],
+      ["6. How to start a return", "Contact parts@allamericanmuscle.co.za or WhatsApp 072 042 6477 with your order number and reason for return."],
     ],
   },
 };
@@ -59,13 +74,13 @@ export default async function PolicyPage({ params }: Props) {
       <h1 className="headline text-3xl text-paper-50">{policy.title}</h1>
       <div className="rule-red mt-2" />
       <div className="prose-dark mt-6">
-        {policy.body.map((p, i) =>
-          p.startsWith("DRAFT") ? (
-            <p key={i} className="rounded border border-amber-800 bg-amber-950/40 px-3 py-2 text-sm text-amber-300">{p}</p>
-          ) : (
-            <p key={i}>{p}</p>
-          ),
-        )}
+        <p className="rounded border border-amber-800 bg-amber-950/40 px-3 py-2 text-sm text-amber-300">{DRAFT_BANNER}</p>
+        {policy.sections.map(([heading, text]) => (
+          <div key={heading || text.slice(0, 20)}>
+            {heading && <h2>{heading}</h2>}
+            <p>{text}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

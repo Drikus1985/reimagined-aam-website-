@@ -12,7 +12,7 @@ const securityHeaders = [
       // Next.js requires inline styles/scripts for hydration; PayFast form posts out.
       "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob:",
+      "img-src 'self' data: blob: https://allamericanmuscle.co.za https://www.allamericanmuscle.co.za",
       "font-src 'self'",
       "connect-src 'self'",
       "form-action 'self' https://sandbox.payfast.co.za https://www.payfast.co.za",
@@ -24,6 +24,14 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  images: {
+    // Product photography is served from the existing WooCommerce media
+    // library until assets are migrated to this deployment/CDN.
+    remotePatterns: [
+      { protocol: "https", hostname: "allamericanmuscle.co.za", pathname: "/wp-content/**" },
+      { protocol: "https", hostname: "www.allamericanmuscle.co.za", pathname: "/wp-content/**" },
+    ],
+  },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },

@@ -4,10 +4,12 @@ A ground-up rebuild of [allamericanmuscle.co.za](https://allamericanmuscle.co.za
 conversion-focused store for American muscle car parts, restorations and engine builds,
 with vehicle-fitment intelligence and an embedded AI parts specialist.
 
-> **Catalogue status:** the database currently holds a clearly-flagged **sample catalogue**
-> (`sourceType=SAMPLE`, `needsReview=true`). The live site could not be crawled from the build
-> environment (network egress blocked — see `reports/crawl-report.md`). Run one of the importers
-> below to migrate the real ~619-product catalogue.
+> **Catalogue status:** the **live catalogue is imported** — 723 products from the site's
+> public Store API export (11.08.2026) with approved master pricing applied to 653 SKUs.
+> See `reports/data-quality-report.md` for the launch checklist (35 unreconciled SKUs,
+> 79 missing photos, fitment verification, legal sign-off on policies).
+> ⚠️ `npx prisma db seed` is a destructive dev reset — it now refuses to run while
+> imported data is present unless passed `--force`.
 
 ## Architecture
 
@@ -45,7 +47,7 @@ npm install
 cp .env.example .env            # then fill in values (see below)
 createdb aam                    # or point DATABASE_URL at an existing DB
 npx prisma migrate dev          # create schema
-npx prisma db seed              # load the sample catalogue + articles + knowledge
+npx prisma db seed              # DEV ONLY: sample catalogue + articles + knowledge (refuses if live data present)
 npm run dev                     # http://localhost:3000
 ```
 
@@ -64,9 +66,21 @@ See `.env.example` for the full annotated list. Summary:
 - `COURIER_GUY_API_KEY/API_URL` — Shiplogic; leave the key empty to use flat-rate fallback quotes
 - `WOO_BASE_URL/CONSUMER_KEY/CONSUMER_SECRET` — only for the WooCommerce API importer
 
-## Catalogue migration (replacing the sample data)
+## Catalogue migration
 
-Three repeatable paths — all normalise to the same JSON and feed one loader:
+**Already done for the live site** via the handover pack (`reports/handover/`):
+
+```bash
+npm run import:aam reports/handover/aam_site_catalogue_20260811.csv   # Store-API export → normalized JSON + site categories
+npm run import:catalog data/import/products.normalized.json -- --replace-sample
+npx tsx scripts/apply-price-overrides.ts data/price-overrides.csv     # approved master pricing (653 SKUs)
+npx tsx scripts/finalize-live-catalog.ts reports/handover/site_skus_not_in_master.csv
+```
+
+Re-run the same pipeline any time a fresh export lands (idempotent upserts by slug).
+Future price updates: drop a `SKU,Price` CSV and run `apply-price-overrides.ts`.
+
+Three additional repeatable paths for future syncs — all normalise to the same JSON and feed one loader:
 
 1. **WooCommerce CSV export (recommended)** — WooCommerce admin → Products → Export:
    ```bash
