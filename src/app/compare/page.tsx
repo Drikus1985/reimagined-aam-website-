@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
+import { ProductImage } from "@/components/product-image";
 import { prisma } from "@/lib/db";
 import { getActiveVehicle } from "@/lib/garage";
 import { verdictsForProducts, productCardInclude } from "@/lib/catalog";
@@ -64,7 +64,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
               {ordered.map((prod) => (
                 <th key={prod.id} className="px-3 py-2 text-left align-bottom">
                   <div className="relative mb-2 aspect-square w-full max-w-40 overflow-hidden rounded border border-ink-800 bg-ink-850">
-                    <Image src={prod.images[0]?.url ?? "/products/engines-components.svg"} alt={prod.images[0]?.alt ?? prod.name} fill sizes="160px" className="object-cover" />
+                    <ProductImage src={prod.images[0]?.url ?? "/products/engines-components.svg"} alt={prod.images[0]?.alt ?? prod.name} fill sizes="160px" className="object-cover" />
                   </div>
                   <Link href={`/products/${prod.slug}`} className="font-semibold text-paper-50 hover:underline">
                     {prod.name}

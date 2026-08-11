@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { ProductImage } from "@/components/product-image";
 import { useRouter } from "next/navigation";
 import { setCartQty } from "@/lib/client/store";
 import { formatZar } from "@/lib/money";
@@ -36,7 +36,7 @@ export function BasketLines({ lines }: { lines: Line[] }) {
       {lines.map((line) => (
         <li key={line.productId} className="flex gap-4 p-4">
           <Link href={`/products/${line.slug}`} className="relative h-20 w-20 shrink-0 overflow-hidden rounded bg-ink-850">
-            {line.imageUrl && <Image src={line.imageUrl} alt="" fill sizes="80px" className="object-cover" />}
+            {line.imageUrl && <ProductImage src={line.imageUrl} alt="" fill sizes="80px" className="object-cover" />}
           </Link>
           <div className="min-w-0 flex-1">
             <Link href={`/products/${line.slug}`} className="font-semibold text-paper-50 hover:underline">

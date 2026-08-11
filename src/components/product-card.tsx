@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { ProductImage } from "@/components/product-image";
 import { ProductCardData } from "@/lib/catalog";
 import { FitmentVerdict } from "@/lib/fitment";
 import { effectivePriceCents, formatZar, isOnSale } from "@/lib/money";
@@ -21,7 +21,7 @@ export function ProductCard({ product, verdict }: { product: ProductCardData; ve
   return (
     <article className="group flex flex-col overflow-hidden rounded-lg border border-ink-800 bg-ink-900 transition-colors hover:border-ink-600">
       <Link href={`/products/${product.slug}`} className="relative block aspect-square bg-ink-850">
-        <Image
+        <ProductImage
           src={product.images[0]?.url ?? "/products/engines-components.svg"}
           alt={product.images[0]?.alt ?? product.name}
           fill

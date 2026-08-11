@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+import { ProductImage } from "@/components/product-image";
 import { prisma } from "@/lib/db";
 import { getActiveVehicle } from "@/lib/garage";
 import { verdictForProduct } from "@/lib/catalog";
@@ -129,7 +129,7 @@ export default async function ProductPage({ params }: Props) {
         {/* Gallery */}
         <div>
           <div className="relative aspect-square overflow-hidden rounded-lg border border-ink-800 bg-ink-850">
-            <Image
+            <ProductImage
               src={product.images[0]?.url ?? "/products/engines-components.svg"}
               alt={product.images[0]?.alt ?? product.name}
               fill
@@ -142,7 +142,7 @@ export default async function ProductPage({ params }: Props) {
             <ul className="mt-3 flex gap-2">
               {product.images.slice(1, 5).map((img) => (
                 <li key={img.id} className="relative h-20 w-20 overflow-hidden rounded border border-ink-800">
-                  <Image src={img.url} alt={img.alt ?? ""} fill sizes="80px" className="object-cover" />
+                  <ProductImage src={img.url} alt={img.alt ?? ""} fill sizes="80px" className="object-cover" />
                 </li>
               ))}
             </ul>
