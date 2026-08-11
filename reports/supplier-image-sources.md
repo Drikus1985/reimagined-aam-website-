@@ -127,3 +127,27 @@ the GRWA quotation PDF. Results:
 
 Production: run `npx tsx scripts/attach-product-images.ts data/supplier-images`
 against the production DB (see docs/DEPLOYMENT.md §1b).
+
+## Round 2 — 11.08.2026 (Rodco 13.05 book + web sourcing)
+
+- `Rodco 13.05.2026.xlsx` extracted (917 images): same thumbnail sizes as the
+  09.07 book — its 21.5 MB is more rows plus a few full-res camera shots of
+  parts we already cover. No photo upgrades gained; no new SKU matches.
+- **5 more products attached** (total now 34): MMR-3001BL (CRS 01-0406-BL,
+  8.5mm 90° blue wire set), MMR-009-BLK (CRS CR-009-BLK trans mount — same
+  part-number core), and the three IFS kits MMR-CM-CT47541FS /
+  MMR-CM-FT53561FS / MMR-CM-FT57601FS (site SKUs are OCR-garbled CRS numbers:
+  CT4754IFS, FT5356IFS, FT5760IFS — "IFS" became "1FS").
+- **Web candidates for 16 more SKUs** compiled for Drix's confirmation —
+  `reports/web-image-candidates.csv` (machine-readable) and the review page
+  at the "Product Photo Candidates" artifact. Highlights: Enginetech official
+  catalog images follow `enginetechcatalog.com/partimages/<PART>.jpg`
+  (L817, L900, BC200J); the BRG- SKUs are Summit codes → Borgeson
+  `borgeson.com/images/product/D/<num>.jpg`; "Quicksilver Shifter" is the
+  B&M 81683. Flagged: BC200J is Enginetech's MAIN bearing set for 289/302
+  (rod bearing is BB214J) — the product name and SKU disagree.
+- Still needing input: Prosport gauge sets (exact photos are in the Prosport
+  "Performance catalog.pdf" in Drive — upload to extract), the distributor /
+  steering column / oil pan / gasket variant picks, and in-house shots for
+  the remaining Mastodon house-brand items and used engine blocks.
+- Remaining without photos: **45**.
