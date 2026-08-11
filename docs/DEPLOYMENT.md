@@ -22,6 +22,23 @@ Target per the 11.08.2026 handover: Vercel with functions in Cape Town (`cpt1`)
    ```
    (Seed is safe here: it only refuses when imported data already exists.)
 
+### 1b. Migrate product photography (recommended, before or after first deploy)
+
+The catalogue currently hot-links 644 photos from the old site's media
+library (with graceful placeholder fallback). To make the new site
+independent of the old host, run — from any machine that can reach
+allamericanmuscle.co.za (the rebuild sandbox cannot):
+
+```bash
+DATABASE_URL="<direct 5432 connection string>" npx tsx scripts/fetch-product-images.ts
+```
+
+Downloads every image to `public/products/live/`, repoints the DB rows, and
+writes `reports/image-migration-report.md`. Use `--dry-run` to preview,
+`--keep-remote` to download without repointing. Commit the folder (or upload
+it to a CDN and adjust URLs), then redeploy. The full URL list is in
+`reports/asset-manifest.csv`.
+
 ## 2. Vercel project
 
 1. Import the GitHub repo into Vercel (framework auto-detects Next.js;
