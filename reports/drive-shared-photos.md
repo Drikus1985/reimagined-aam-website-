@@ -47,7 +47,11 @@ migration (`fetch-product-images.ts` run) or upload the folder here.
   Three renders have no catalogue product yet (67-72 A-body rear coil-over
   kit, Mopar B/E-body spindle, 64-70 Mustang 4-link) — future listings.
 - **BC200J25 attached from AAM's own Enginetech folder** — exact-SKU image,
-  removed from the off-sandbox web-fetch list.
+  removed from the off-sandbox web-fetch list. The photo itself settles the
+  part-type question: it shows M5284 main shells + W5284 thrust washers, i.e.
+  the MAIN bearing set. The product name "...Rod Bearing" should be corrected
+  to "Main Bearing Set" in the admin. (Bottom band of the source file was
+  corrupt in transfer and has been cropped off.)
 - Flag: the Ford 9″ housing SKU is stored as `MMR-9&#8243;-57&#8243;H`
   (HTML entities baked into the SKU by the old site) — worth cleaning up.
 
