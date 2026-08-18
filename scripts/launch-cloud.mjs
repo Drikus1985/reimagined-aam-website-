@@ -74,8 +74,6 @@ async function infra() {
   console.log("Database password reset.");
   await sleep(5_000);
 
-  const direct = `postgresql://postgres:${password}@db.${ref}.supabase.co:5432/postgres`;
-
   // ask the API for the real pooler host rather than guessing the pattern
   let poolerHost = `aws-0-${proj.region}.pooler.supabase.com`;
   let poolerPort = 6543;
@@ -96,6 +94,10 @@ async function infra() {
   } else {
     console.log(`Pooler config lookup returned ${poolCfg.status}; using fallback host ${poolerHost}`);
   }
+  // db.<ref>.supabase.co is IPv6-only and GitHub runners are IPv4-only, so the
+  // data load goes through the SESSION pooler (port 5432 — supports migrations);
+  // the app runtime on Vercel uses the TRANSACTION pooler (6543).
+  const direct = `postgresql://postgres.${ref}:${password}@${poolerHost}:5432/postgres`;
   const pooler = `postgresql://postgres.${ref}:${password}@${poolerHost}:${poolerPort}/postgres?pgbouncer=true&connection_limit=1`;
   mask(direct); mask(pooler);
   ghEnv("DATABASE_URL", direct);
