@@ -98,7 +98,10 @@ async function infra() {
   // data load goes through the SESSION pooler (port 5432 — supports migrations);
   // the app runtime on Vercel uses the TRANSACTION pooler (6543).
   const direct = `postgresql://postgres.${ref}:${password}@${poolerHost}:5432/postgres`;
-  const pooler = `postgresql://postgres.${ref}:${password}@${poolerHost}:${poolerPort}/postgres?pgbouncer=true&connection_limit=1`;
+  // connection_limit must cover Next.js's parallel page pre-rendering at build
+  // time (connection_limit=1 starves it into P2024 pool timeouts); the
+  // transaction pooler multiplexes these client connections safely.
+  const pooler = `postgresql://postgres.${ref}:${password}@${poolerHost}:${poolerPort}/postgres?pgbouncer=true&connection_limit=10&pool_timeout=30`;
   mask(direct); mask(pooler);
   ghEnv("DATABASE_URL", direct);
   ghEnv("DIRECT_DATABASE_URL", direct);
