@@ -70,7 +70,8 @@ node scripts/fetch-web-images.mjs || echo "    (some fetches failed — they can
 npx tsx scripts/attach-product-images.ts data/supplier-images || true
 ok
 
-if ! git diff --quiet -- public/products/live data/supplier-images 2>/dev/null; then
+# git diff misses untracked (newly downloaded) files — use status --porcelain
+if [ -n "$(git status --porcelain -- public/products/live data/supplier-images 2>/dev/null)" ]; then
   step "Committing downloaded photos so Vercel serves them"
   git add public/products/live data/supplier-images reports/image-migration-report.md 2>/dev/null
   git commit -m "Add migrated product photos for production" || true
