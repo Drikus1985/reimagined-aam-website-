@@ -46,7 +46,8 @@ step "Seeding reference data (articles, vehicles, engine families)"
 npx prisma db seed || echo "    (seed skipped — data already present, that's fine)"
 
 step "Importing the 723-product live catalogue"
-npm run import:aam reports/handover/aam_site_catalogue_20260811.csv || die "catalogue import"
+npm run import:aam reports/handover/aam_site_catalogue_20260811.csv || die "catalogue normalize"
+npx tsx scripts/import-catalog.ts data/import/products.normalized.json --replace-sample || die "catalogue load"
 ok
 
 step "Applying approved master pricing (655 rows)"
