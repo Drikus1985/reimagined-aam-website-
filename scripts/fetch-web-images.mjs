@@ -27,9 +27,7 @@ const sharp = require("sharp");
 const CONFIRMED = {
   "L817": ["https://enginetechcatalog.com/partimages/L817.jpg"],
   "L900": ["https://enginetechcatalog.com/partimages/L900.jpg"],
-  // NB: BC200J is Enginetech's MAIN bearing set for 289/302 (rod = BB214J).
-  // SKU kept authoritative; check the product name on the site.
-  "BC200J25": ["https://enginetechcatalog.com/partimages/BC200J.jpg"],
+  // BC200J25 removed 16.08 — attached from AAM's own Drive Enginetech folder.
   "BRG-114925": [
     "https://www.borgeson.com/images/product/D/114925.jpg",
     "https://static.summitracing.com/global/images/prod/xlarge/brg-114925_xl.jpg",

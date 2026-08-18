@@ -13,8 +13,10 @@
  * whose image URL already exists is skipped.
  *
  * Options:
- *   --dry-run   report what would be attached, write nothing
- *   --replace   also attach to products that already have images (appended last)
+ *   --dry-run       report what would be attached, write nothing
+ *   --replace       also attach to products that already have images (appended last)
+ *   --set-primary   for products that already have images, overwrite the FIRST
+ *                   image's URL with the new local file (photo upgrade mode)
  */
 
 import fs from "node:fs";
@@ -25,11 +27,13 @@ const prisma = new PrismaClient();
 
 const DRY_RUN = process.argv.includes("--dry-run");
 const REPLACE = process.argv.includes("--replace");
-const dir = process.argv.slice(2).find((a) => !a.startsWith("--"));
-if (!dir || !fs.existsSync(dir)) {
+const SET_PRIMARY = process.argv.includes("--set-primary");
+const dirArg = process.argv.slice(2).find((a) => !a.startsWith("--"));
+if (!dirArg || !fs.existsSync(dirArg)) {
   console.error("Usage: npx tsx scripts/attach-product-images.ts <dir-of-SKU-named-images> [--dry-run] [--replace]");
   process.exit(1);
 }
+const dir: string = dirArg;
 
 const OUT_DIR = path.join(process.cwd(), "public", "products", "live");
 const IMAGE_EXT = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif"]);
@@ -61,7 +65,7 @@ async function main() {
       unmatched.push(file);
       continue;
     }
-    if (product._count.images > 0 && !REPLACE) {
+    if (product._count.images > 0 && !REPLACE && !SET_PRIMARY) {
       skippedExisting.push(`${file} (${product.sku} already has ${product._count.images} image(s))`);
       continue;
     }
@@ -69,18 +73,26 @@ async function main() {
     const outName = `supplier-${sanitize(product.sku!)}${ext}`.toLowerCase();
     const url = `/products/live/${outName}`;
     if (DRY_RUN) {
-      console.log(`[dry-run] ${file} -> ${url} (${product.sku}, ${product.slug})`);
+      console.log(`[dry-run] ${file} -> ${url} (${product.sku}, ${product.slug})${SET_PRIMARY && product._count.images > 0 ? " [replaces primary]" : ""}`);
       attached++;
       continue;
     }
 
     fs.mkdirSync(OUT_DIR, { recursive: true });
     fs.copyFileSync(path.join(dir, file), path.join(OUT_DIR, outName));
-    const existing = await prisma.productImage.findFirst({ where: { productId: product.id, url } });
-    if (!existing) {
-      await prisma.productImage.create({
-        data: { productId: product.id, url, alt: product.sku ?? product.slug, position: product._count.images },
+    if (SET_PRIMARY && product._count.images > 0) {
+      const primary = await prisma.productImage.findFirst({
+        where: { productId: product.id },
+        orderBy: { position: "asc" },
       });
+      await prisma.productImage.update({ where: { id: primary!.id }, data: { url } });
+    } else {
+      const existing = await prisma.productImage.findFirst({ where: { productId: product.id, url } });
+      if (!existing) {
+        await prisma.productImage.create({
+          data: { productId: product.id, url, alt: product.sku ?? product.slug, position: product._count.images },
+        });
+      }
     }
     attached++;
   }
