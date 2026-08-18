@@ -28,11 +28,12 @@ const prisma = new PrismaClient();
 const DRY_RUN = process.argv.includes("--dry-run");
 const REPLACE = process.argv.includes("--replace");
 const SET_PRIMARY = process.argv.includes("--set-primary");
-const dir = process.argv.slice(2).find((a) => !a.startsWith("--"));
-if (!dir || !fs.existsSync(dir)) {
+const dirArg = process.argv.slice(2).find((a) => !a.startsWith("--"));
+if (!dirArg || !fs.existsSync(dirArg)) {
   console.error("Usage: npx tsx scripts/attach-product-images.ts <dir-of-SKU-named-images> [--dry-run] [--replace]");
   process.exit(1);
 }
+const dir: string = dirArg;
 
 const OUT_DIR = path.join(process.cwd(), "public", "products", "live");
 const IMAGE_EXT = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif"]);
