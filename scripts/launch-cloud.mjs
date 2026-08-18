@@ -133,13 +133,21 @@ async function deploy() {
   const project = projRes.json;
   console.log(`Vercel project: ${project.id}`);
 
+  // the bare <name>.vercel.app may be taken globally — always use the domain
+  // Vercel actually assigned to this project (e.g. aam-website-eight.vercel.app)
+  const domRes = await verc("GET", `/v9/projects/${project.id}/domains`);
+  const dom = domRes.json?.domains?.find((d) => d.verified && d.apexName === "vercel.app" && !d.name.includes("-git-"));
+  if (!dom) die(`could not determine the project's production domain: ${domRes.status} ${JSON.stringify(domRes.json).slice(0, 200)}`);
+  const siteUrl = `https://${dom.name}`;
+  console.log(`Production domain: ${siteUrl}`);
+
   // environment variables
   const adminPassword = process.env.ADMIN_PASSWORD_OVERRIDE || genSecret(20);
   const sessionSecret = genSecret(48);
   mask(adminPassword); mask(sessionSecret);
   const envs = [
     ["DATABASE_URL", pooler],
-    ["NEXT_PUBLIC_SITE_URL", `https://${VERCEL_PROJECT}.vercel.app`],
+    ["NEXT_PUBLIC_SITE_URL", siteUrl],
     ["ADMIN_PASSWORD", adminPassword],
     ["SESSION_SECRET", sessionSecret],
     ["PAYFAST_SANDBOX", "true"],
@@ -170,9 +178,8 @@ async function deploy() {
     const state = d.json?.readyState ?? d.json?.status;
     console.log(`  ${state}`);
     if (state === "READY") {
-      const url = `https://${d.json.url}`;
-      ghEnv("DEPLOY_URL", `https://${VERCEL_PROJECT}.vercel.app`);
-      console.log(`DEPLOYED: ${url} (stable: https://${VERCEL_PROJECT}.vercel.app)`);
+      ghEnv("DEPLOY_URL", siteUrl);
+      console.log(`DEPLOYED: ${siteUrl}`);
       return;
     }
     if (state === "ERROR" || state === "CANCELED") die(`deployment ${state} — check the Vercel dashboard build logs`);
