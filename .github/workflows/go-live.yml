@@ -1,0 +1,72 @@
+name: Go-live data load
+
+# Runs the full production data load against Supabase, migrates the product
+# photos, and smoke-tests the deployment — all from GitHub's servers.
+#
+# Needs ONE repository secret: DATABASE_URL — the DIRECT Supabase connection
+# string (port 5432, password filled in). Add it at:
+#   Settings > Secrets and variables > Actions > New repository secret
+#
+# Trigger it from the Actions tab (or the rebuild assistant triggers it via
+# the GitHub API), optionally passing the Vercel preview URL for the
+# 19-check smoke test.
+
+on:
+  workflow_dispatch:
+    inputs:
+      preview_url:
+        description: "Vercel deployment URL for the smoke test (optional)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: go-live
+  cancel-in-progress: false
+
+jobs:
+  load:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check secret is configured
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::The DATABASE_URL repository secret is not set. Add the direct Supabase connection string (port 5432) under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          case "$DATABASE_URL" in
+            *:6543*) echo "::error::That's the pooler string (6543) — the workflow needs the DIRECT string (5432). The pooler string belongs in Vercel."; exit 1 ;;
+          esac
+
+      - name: Configure git identity for the photo commit
+        run: |
+          git config user.name "aam-go-live"
+          git config user.email "info@allamericanmuscle.co.za"
+
+      - name: Run the full data load (schema, catalogue, pricing, photos)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: bash scripts/go-live.sh </dev/null
+
+      - name: Smoke test the deployment
+        if: ${{ inputs.preview_url != '' }}
+        run: node scripts/smoke-test.mjs "${{ inputs.preview_url }}"
+
+      - name: Upload image-migration report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-migration-report
+          path: reports/image-migration-report.md
+          if-no-files-found: ignore
