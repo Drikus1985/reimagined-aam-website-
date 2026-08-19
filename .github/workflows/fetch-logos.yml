@@ -1,0 +1,31 @@
+name: Fetch brand logo candidates
+
+# Collects brand/manufacturer logo candidates from Wikipedia and brand
+# homepages into reports/logo-candidates/ and pushes them to the
+# logo-candidates branch for human review. Nothing goes live from this.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Fetch candidates
+        run: node scripts/fetch-brand-logos.mjs
+      - name: Push to review branch
+        run: |
+          git config user.name "aam-logo-fetch"
+          git config user.email "info@allamericanmuscle.co.za"
+          git checkout -B logo-candidates
+          git add -f reports/logo-candidates
+          git commit -m "Add brand logo candidates for review"
+          git push -f origin logo-candidates
