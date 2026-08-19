@@ -15,15 +15,16 @@ fs.mkdirSync(OUT, { recursive: true });
 
 const UA = { "User-Agent": "Mozilla/5.0 (compatible; AAM-website-build/1.0; +https://allamericanmuscle.co.za)" };
 
-// Wikipedia files already confirmed via infobox lookup.
+// Wikipedia files already confirmed via infobox lookup (arrays = try in order).
 const WIKI_FILES = {
-  "make-ford": "Ford_logo_flat.svg",
-  "make-chevrolet": "Chevrolet_(logo).svg",
-  "make-dodge": "Dodge_2022_logo.svg",
-  "make-plymouth": "Plymouth_logo.svg",
-  edelbrock: "Edelbrock_logo.svg",
-  holley: "Holley_Performance_Products_logo.svg",
-  "ford-racing": "Ford_Racing_2025_Logo.png",
+  "make-ford": ["Ford_logo_flat.svg"],
+  "make-chevrolet": ["Chevrolet_(logo).svg"],
+  "make-dodge": ["Dodge_2022_logo.svg"],
+  "make-plymouth": ["Plymouth_logo.svg"],
+  "make-pontiac": ["Pontiac_logo.svg", "Pontiac_(logo).svg", "Pontiac_Motor_Division_logo.svg"],
+  edelbrock: ["Edelbrock_logo.svg"],
+  holley: ["Holley_Performance_Products_logo.svg"],
+  "ford-racing": ["Ford_Racing_2025_Logo.png"],
 };
 
 // Wikipedia article titles still to try for an infobox logo/image.
@@ -39,7 +40,8 @@ const WIKI_ARTICLES = {
 // Brand homepages for logo scraping.
 const SITES = {
   "ap-racing": "https://apracing.com",
-  arp: "https://arp-bolts.com",
+  arp: "https://www.arp-bolts.com",
+  msd2: "https://www.holley.com/brands/msd_ignition/",
   "comp-cams": "https://www.compcams.com",
   depo: "https://www.depoautolamp.com",
   dynacorn: "https://dynacorn.com",
@@ -83,9 +85,13 @@ async function saveCandidate(slug, kind, url) {
 }
 
 // 1. Known Wikipedia files (rasterized at 600px for SVGs).
-for (const [slug, fname] of Object.entries(WIKI_FILES)) {
+for (const [slug, fnames] of Object.entries(WIKI_FILES)) {
   console.log(slug);
-  await saveCandidate(slug, "wiki", `https://en.wikipedia.org/wiki/Special:FilePath/${encodeURIComponent(fname)}?width=600`);
+  for (const fname of fnames) {
+    const ok = await saveCandidate(slug, "wiki", `https://en.wikipedia.org/wiki/Special:FilePath/${encodeURIComponent(fname)}?width=600`);
+    if (ok) break;
+    await sleep(800);
+  }
   await sleep(800);
 }
 
