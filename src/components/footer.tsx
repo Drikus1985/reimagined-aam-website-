@@ -50,7 +50,10 @@ export function Footer() {
       </div>
       <div className="border-t border-ink-800">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-4 text-xs text-steel-400">
-          <p>© {new Date().getFullYear()} All American Muscle (Pty) Ltd. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} All American Muscle (Pty) Ltd. All rights reserved. All product names, logos
+            and brands are property of their respective owners and are used for identification purposes only.
+          </p>
           <ul className="flex flex-wrap gap-4">
             <li><Link className="hover:text-white" href="/policies/terms">Terms</Link></li>
             <li><Link className="hover:text-white" href="/policies/privacy">Privacy &amp; POPIA</Link></li>

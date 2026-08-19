@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import { BrandLogoChip } from "@/components/logo";
 
 export const metadata: Metadata = {
   title: "Brands",
@@ -25,7 +26,14 @@ export default async function BrandsPage() {
         {brands.map((b) => (
           <li key={b.slug}>
             <Link href={`/brand/${b.slug}`} className="block h-full rounded-lg border border-ink-800 bg-ink-900 p-5 transition-colors hover:border-race-600">
-              <p className="headline text-lg text-paper-50">{b.name}</p>
+              {b.logoUrl ? (
+                <>
+                  <div className="flex h-12 items-start"><BrandLogoChip src={b.logoUrl} name={b.name} /></div>
+                  <p className="headline mt-2 text-sm text-paper-50">{b.name}</p>
+                </>
+              ) : (
+                <p className="headline flex h-12 items-end text-lg text-paper-50">{b.name}</p>
+              )}
               <p className="mt-1 text-xs text-steel-400">{b._count.products} product{b._count.products === 1 ? "" : "s"}</p>
               {b.description && <p className="mt-2 text-sm leading-snug text-steel-300">{b.description}</p>}
             </Link>
