@@ -9,6 +9,7 @@ import { effectivePriceCents, formatZar, isOnSale } from "@/lib/money";
 import { FitmentBadge } from "@/components/fitment-badge";
 import { AddToCartButton } from "@/components/add-to-cart";
 import { AskAiButton } from "@/components/ask-ai-button";
+import { BrandLogoChip } from "@/components/logo";
 import { ProductCard } from "@/components/product-card";
 import { productCardInclude } from "@/lib/catalog";
 import { describeVehicle } from "@/lib/fitment";
@@ -153,11 +154,14 @@ export default async function ProductPage({ params }: Props) {
         <div>
           <p className="flex flex-wrap items-center gap-3">
             {product.brand && (
-              <Link
-                href={`/brand/${product.brand.slug}`}
-                className="headline rounded border border-ink-700 px-3.5 py-1 text-sm tracking-[0.14em] text-paper-50 hover:border-race-600"
-              >
-                {product.brand.name.toUpperCase()}
+              <Link href={`/brand/${product.brand.slug}`} className="hover:opacity-90">
+                {product.brand.logoUrl ? (
+                  <BrandLogoChip src={product.brand.logoUrl} name={product.brand.name} small />
+                ) : (
+                  <span className="headline block rounded border border-ink-700 px-3.5 py-1 text-sm tracking-[0.14em] text-paper-50 hover:border-race-600">
+                    {product.brand.name.toUpperCase()}
+                  </span>
+                )}
               </Link>
             )}
             {product.sku && <span className="text-xs font-semibold uppercase tracking-wider text-steel-400">SKU {product.sku}</span>}
