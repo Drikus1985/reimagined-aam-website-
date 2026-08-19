@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 // Makes with a logo file in public/makes/<slug>.webp (shown on a light chip).
-const MAKE_LOGOS = new Set(["ford", "chevrolet", "dodge", "plymouth"]);
+const MAKE_LOGOS = new Set(["ford", "chevrolet", "dodge", "plymouth", "pontiac"]);
 
 export default async function VehiclesPage() {
   const [makes, engines] = await Promise.all([
