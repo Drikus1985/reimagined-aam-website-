@@ -3,17 +3,25 @@ import { prisma } from "@/lib/db";
 import { productCardInclude } from "@/lib/catalog";
 import { ProductCard } from "@/components/product-card";
 import { AskAiButton } from "@/components/ask-ai-button";
+import { HeroVehiclePicker } from "@/components/hero-vehicle-picker";
 import { businessInfo } from "../../prisma/seed-data";
 
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [featured, bestSellers, inStock, categories, articles] = await Promise.all([
+  const [featured, bestSellers, inStock, categories, articles, productCount, topBrands, brandCount] = await Promise.all([
     prisma.product.findMany({ where: { status: "ACTIVE", isFeatured: true }, include: productCardInclude, take: 4, orderBy: { popularity: "desc" } }),
     prisma.product.findMany({ where: { status: "ACTIVE", isBestSeller: true }, include: productCardInclude, take: 4, orderBy: { popularity: "desc" } }),
     prisma.product.findMany({ where: { status: "ACTIVE", stockStatus: "IN_STOCK" }, include: productCardInclude, take: 4, orderBy: { popularity: "desc" } }),
     prisma.category.findMany({ where: { parentId: null }, orderBy: { position: "asc" }, include: { _count: { select: { products: true } } } }),
     prisma.article.findMany({ orderBy: { publishedAt: "desc" }, take: 3 }),
+    prisma.product.count({ where: { status: "ACTIVE" } }),
+    prisma.brand.findMany({
+      orderBy: { products: { _count: "desc" } },
+      take: 2,
+      include: { _count: { select: { products: true } } },
+    }),
+    prisma.brand.count(),
   ]);
 
   return (
@@ -22,53 +30,38 @@ export default async function HomePage() {
       <section className="blueprint border-b border-ink-800 bg-ink-900">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 lg:grid-cols-2 lg:py-20">
           <div>
-            <p className="text-sm font-bold uppercase tracking-widest text-race-500">Alberton, South Africa · Est. workshop 2000 m²</p>
-            <h1 className="headline mt-3 text-4xl leading-tight text-paper-50 sm:text-5xl">
+            <p className="text-sm font-bold uppercase tracking-widest text-race-500">Alberton, South Africa · American muscle specialists</p>
+            <h1 className="headline mt-3 text-4xl leading-tight text-paper-50 sm:text-5xl lg:text-6xl">
               American muscle.<br />Real parts. Real fitment.<br />
-              <span className="text-race-500">Nationwide delivery.</span>
+              <span className="text-race-500">Delivered nationwide.</span>
             </h1>
             <p className="mt-4 max-w-xl text-lg text-steel-300">
-              600+ performance parts for classic Ford, Chevrolet, Dodge and Mopar — backed by the workshop that
-              restores and builds these cars every day. Tell us your vehicle and we'll tell you what fits.
+              {productCount} performance parts for classic Ford, Chevrolet, Dodge and Mopar — backed by the workshop
+              that restores and builds these cars every day.
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/vehicles" className="rounded bg-race-600 px-6 py-3 font-bold uppercase tracking-wide text-white hover:bg-race-700">
-                Shop by vehicle
-              </Link>
+            <div className="mt-8 flex flex-wrap gap-10">
+              <div>
+                <p className="headline text-3xl text-brass-400">{productCount}</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-steel-400">Parts in catalogue</p>
+              </div>
+              <div>
+                <p className="headline text-3xl text-brass-400">{brandCount}</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-steel-400">US brands stocked</p>
+              </div>
+              <div>
+                <p className="headline text-3xl text-brass-400">2 000 m²</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-steel-400">Alberton workshop</p>
+              </div>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/shop" className="rounded border border-ink-600 px-6 py-3 font-bold uppercase tracking-wide text-paper-100 hover:border-race-600">
                 Browse all parts
               </Link>
+              <AskAiButton prompt="I'd like help choosing parts. Ask me about my vehicle and what I'm building." label="Ask the AI specialist" />
             </div>
-            <ul className="mt-8 grid max-w-xl grid-cols-2 gap-3 text-sm text-steel-300 sm:grid-cols-3">
-              <li className="rounded border border-ink-800 bg-ink-950/60 px-3 py-2">✓ Verified fitment data</li>
-              <li className="rounded border border-ink-800 bg-ink-950/60 px-3 py-2">✓ PayFast secure checkout</li>
-              <li className="rounded border border-ink-800 bg-ink-950/60 px-3 py-2">✓ The Courier Guy delivery</li>
-              <li className="rounded border border-ink-800 bg-ink-950/60 px-3 py-2">✓ US supplier network</li>
-              <li className="rounded border border-ink-800 bg-ink-950/60 px-3 py-2">✓ In-house engine builds</li>
-              <li className="rounded border border-ink-800 bg-ink-950/60 px-3 py-2">✓ WhatsApp specialists</li>
-            </ul>
           </div>
-          <div className="flex flex-col justify-center gap-4">
-            <div className="rounded-lg border border-ink-700 bg-ink-950/80 p-6">
-              <h2 className="headline text-xl text-paper-50">Meet the AI specialist</h2>
-              <p className="mt-2 text-sm leading-relaxed text-steel-300">
-                Ask it anything about SBC, BBC, Windsor, Cleveland or Mopar builds. It searches our live catalogue,
-                checks verified fitment against your garage vehicle, and hands you to a human when it matters.
-              </p>
-              <div className="mt-4">
-                <AskAiButton prompt="I'd like help choosing parts. Ask me about my vehicle and what I'm building." label="Start a conversation" />
-              </div>
-            </div>
-            <div className="rounded-lg border border-ink-700 bg-ink-950/80 p-6">
-              <h2 className="headline text-xl text-paper-50">My Garage</h2>
-              <p className="mt-2 text-sm leading-relaxed text-steel-300">
-                Save your vehicle once. Every product page then shows: confirmed fit, universal, needs verification,
-                or not compatible. No more guesswork orders.
-              </p>
-              <Link href="/garage" className="mt-4 inline-block rounded border border-ink-600 px-5 py-2.5 text-sm font-bold uppercase text-paper-100 hover:border-race-600">
-                Set up my garage
-              </Link>
-            </div>
+          <div className="flex flex-col justify-center">
+            <HeroVehiclePicker />
           </div>
         </div>
       </section>
@@ -87,6 +80,26 @@ export default async function HomePage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* Brands strip */}
+      <section className="mx-auto max-w-7xl px-4">
+        <div className="flex flex-wrap items-center gap-4 rounded-lg border border-ink-800 bg-ink-900 px-5 py-4 sm:gap-5">
+          <p className="text-xs font-bold uppercase tracking-wider text-brass-400">Brands we stock</p>
+          {topBrands.map((b) => (
+            <Link
+              key={b.slug}
+              href={`/brand/${b.slug}`}
+              className="headline rounded border border-ink-700 px-4 py-1.5 text-base tracking-[0.14em] text-paper-50 hover:border-race-600"
+            >
+              {b.name.toUpperCase()}
+            </Link>
+          ))}
+          <p className="text-sm text-steel-400">+ {Math.max(brandCount - topBrands.length, 0)} more American performance brands</p>
+          <Link href="/brands" className="ml-auto text-sm font-semibold uppercase tracking-wide text-race-500 hover:underline">
+            All brands →
+          </Link>
+        </div>
       </section>
 
       {/* Featured */}

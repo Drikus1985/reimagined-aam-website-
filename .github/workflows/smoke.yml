@@ -1,0 +1,26 @@
+name: Smoke test
+
+# Runs the 19-check smoke test against any deployment URL, from GitHub's
+# servers. Dispatch it from the Actions tab with the URL to test.
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Deployment URL to test (e.g. https://aam-website-eight.vercel.app)"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run the 19-check smoke test
+        run: node scripts/smoke-test.mjs "${{ inputs.url }}"
