@@ -1,38 +1,25 @@
-/** AAM shield badge + wordmark lockup, per the approved restyle mockups. */
-export function AamBadge({ size = 38 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <path
-        d="M16 1.5 L28.5 5.5 V16 C28.5 24.2 22.3 28.6 16 30.5 C9.7 28.6 3.5 24.2 3.5 16 V5.5 Z"
-        fill="#20242a"
-        stroke="#e01c3c"
-        strokeWidth="1.6"
-      />
-      <polygon
-        points="16,6.2 17.3,9.1 20.4,9.4 18.1,11.5 18.8,14.5 16,12.9 13.2,14.5 13.9,11.5 11.6,9.4 14.7,9.1"
-        fill="#d3a959"
-      />
-      <rect x="9" y="17.5" width="14" height="2.2" fill="#c8102e" />
-      <rect x="10.8" y="21.5" width="10.4" height="2" fill="#efebe2" opacity="0.75" />
-    </svg>
+import Image from "next/image";
+
+/**
+ * Official AAM logo (pin-up script lockup, transparent background) —
+ * pulled from the brand's own artwork. public/brand/aam-logo.webp is the
+ * trimmed master; aam-logo-sm.webp is the small footer cut.
+ */
+export function AamLogo({ small = false }: { small?: boolean }) {
+  return small ? (
+    <Image src="/brand/aam-logo-sm.webp" alt="All American Muscle" width={160} height={76} className="h-14 w-auto" />
+  ) : (
+    <Image src="/brand/aam-logo.webp" alt="All American Muscle" width={310} height={148} priority className="h-14 w-auto sm:h-16" />
   );
 }
 
-export function AamLogo({ tagline = true }: { tagline?: boolean }) {
+/** Brand logo chip — black brand artwork stays on a light chip for contrast. */
+export function BrandLogoChip({ src, name, small = false }: { src: string; name: string; small?: boolean }) {
   return (
-    <span className="flex items-center gap-3">
-      <AamBadge />
-      <span className="flex flex-col">
-        <span className="flex items-baseline gap-1.5">
-          <span className="headline text-xl leading-none text-paper-50 sm:text-2xl">ALL AMERICAN</span>
-          <span className="headline text-xl leading-none text-race-500 sm:text-2xl">MUSCLE</span>
-        </span>
-        {tagline && (
-          <span className="hidden text-[10px] font-bold uppercase tracking-[0.28em] text-steel-400 sm:block">
-            Parts · Restorations · Engines
-          </span>
-        )}
-      </span>
+    <span className={`inline-flex items-center rounded bg-paper-50 ${small ? "px-2.5 py-1" : "px-3 py-1.5"}`}>
+      {/* Brand marks come in arbitrary aspect ratios; plain img keeps it simple */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt={name} className={small ? "h-5 w-auto" : "h-7 w-auto"} />
     </span>
   );
 }

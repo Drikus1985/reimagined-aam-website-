@@ -4,6 +4,7 @@ import { productCardInclude } from "@/lib/catalog";
 import { ProductCard } from "@/components/product-card";
 import { AskAiButton } from "@/components/ask-ai-button";
 import { HeroVehiclePicker } from "@/components/hero-vehicle-picker";
+import { BrandLogoChip } from "@/components/logo";
 import { businessInfo } from "../../prisma/seed-data";
 
 export const revalidate = 300;
@@ -87,12 +88,14 @@ export default async function HomePage() {
         <div className="flex flex-wrap items-center gap-4 rounded-lg border border-ink-800 bg-ink-900 px-5 py-4 sm:gap-5">
           <p className="text-xs font-bold uppercase tracking-wider text-brass-400">Brands we stock</p>
           {topBrands.map((b) => (
-            <Link
-              key={b.slug}
-              href={`/brand/${b.slug}`}
-              className="headline rounded border border-ink-700 px-4 py-1.5 text-base tracking-[0.14em] text-paper-50 hover:border-race-600"
-            >
-              {b.name.toUpperCase()}
+            <Link key={b.slug} href={`/brand/${b.slug}`} className="hover:opacity-90">
+              {b.logoUrl ? (
+                <BrandLogoChip src={b.logoUrl} name={b.name} />
+              ) : (
+                <span className="headline block rounded border border-ink-700 px-4 py-1.5 text-base tracking-[0.14em] text-paper-50 hover:border-race-600">
+                  {b.name.toUpperCase()}
+                </span>
+              )}
             </Link>
           ))}
           <p className="text-sm text-steel-400">+ {Math.max(brandCount - topBrands.length, 0)} more American performance brands</p>
