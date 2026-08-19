@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
+import { Oswald } from "next/font/google";
 import "./globals.css";
+
+const oswald = Oswald({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-oswald",
+  display: "swap",
+});
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { AssistantWidget } from "@/components/assistant-widget";
@@ -46,7 +54,7 @@ const orgJsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-ZA">
+    <html lang="en-ZA" className={oswald.variable}>
       <body className="min-h-screen">
         <Header />
         <main id="main">{children}</main>

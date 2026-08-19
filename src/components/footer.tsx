@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { businessInfo } from "../../prisma/seed-data";
+import { AamBadge } from "./logo";
 
 export function Footer() {
   return (
     <footer className="mt-16 border-t border-ink-800 bg-ink-900">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <p className="headline text-lg text-paper-50">ALL AMERICAN <span className="text-race-500">MUSCLE</span></p>
+          <p className="flex items-center gap-2.5">
+            <AamBadge size={28} />
+            <span className="headline text-lg text-paper-50">ALL AMERICAN <span className="text-race-500">MUSCLE</span></span>
+          </p>
           <p className="mt-3 text-sm leading-relaxed text-steel-300">
             American muscle car parts, restorations and engine builds from our 2000&nbsp;m² workshop in Alberton.
             Classic Ford, Chevrolet, Dodge and Mopar — and nothing else.

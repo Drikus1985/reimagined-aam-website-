@@ -18,7 +18,7 @@
   --color-race-500: #e01c3c;
   --color-brass-400: #d3a959;
 
-  --font-display: "Arial Narrow", "Helvetica Neue Condensed", "Roboto Condensed", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-oswald), "Arial Narrow", "Helvetica Neue Condensed", "Roboto Condensed", ui-sans-serif, system-ui, sans-serif;
 }
 
 html {

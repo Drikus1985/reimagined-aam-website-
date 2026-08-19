@@ -151,13 +151,18 @@ export default async function ProductPage({ params }: Props) {
 
         {/* Buy box */}
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-steel-400">
+          <p className="flex flex-wrap items-center gap-3">
             {product.brand && (
-              <Link href={`/brand/${product.brand.slug}`} className="hover:text-white">{product.brand.name}</Link>
+              <Link
+                href={`/brand/${product.brand.slug}`}
+                className="headline rounded border border-ink-700 px-3.5 py-1 text-sm tracking-[0.14em] text-paper-50 hover:border-race-600"
+              >
+                {product.brand.name.toUpperCase()}
+              </Link>
             )}
-            {product.sku && <span className="ml-2 font-normal normal-case text-steel-400">SKU {product.sku}</span>}
+            {product.sku && <span className="text-xs font-semibold uppercase tracking-wider text-steel-400">SKU {product.sku}</span>}
           </p>
-          <h1 className="mt-1 text-2xl font-bold leading-tight text-paper-50 lg:text-3xl">{product.name}</h1>
+          <h1 className="headline mt-3 text-3xl leading-tight text-paper-50 lg:text-4xl">{product.name}</h1>
 
           <div className="mt-4 flex items-baseline gap-3">
             <span className="text-3xl font-bold text-paper-50">{formatZar(price)}</span>
@@ -209,10 +214,22 @@ export default async function ProductPage({ params }: Props) {
           </div>
 
           <ul className="mt-5 space-y-1.5 text-sm text-steel-300">
-            <li>🚚 Nationwide delivery via The Courier Guy — quote at checkout, main centres typically 1–3 working days</li>
-            <li>🏭 Free collection from our Alberton workshop</li>
-            <li>🔒 Secure checkout with PayFast (cards, instant EFT)</li>
-            <li>↩ 14-day returns on unused parts — <Link href="/policies/returns" className="text-race-500 hover:underline">policy</Link></li>
+            <li className="flex items-center gap-2.5">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-steel-400" aria-hidden="true"><path d="M1 4h14v12H1zM15 9h4l3 3v4h-7V9zM5.5 19a1.5 1.5 0 1 0 0-.01M18.5 19a1.5 1.5 0 1 0 0-.01" /></svg>
+              Nationwide delivery via The Courier Guy — quote at checkout, main centres typically 1–3 working days
+            </li>
+            <li className="flex items-center gap-2.5">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-steel-400" aria-hidden="true"><path d="M14.7 6.3a5 5 0 1 0-6.6 6.6L3 18v3h3l5.1-5.1a5 5 0 0 0 6.6-6.6l-3.2 3.2-2.8-2.8 3-3z" /></svg>
+              Free collection from our Alberton workshop
+            </li>
+            <li className="flex items-center gap-2.5">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-steel-400" aria-hidden="true"><path d="M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4" /></svg>
+              Secure checkout with PayFast (cards, instant EFT)
+            </li>
+            <li className="flex items-center gap-2.5">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-steel-400" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
+              <span>14-day returns on unused parts — <Link href="/policies/returns" className="text-race-500 hover:underline">policy</Link></span>
+            </li>
           </ul>
 
           {required.length > 0 && (
